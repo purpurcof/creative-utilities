@@ -11,7 +11,6 @@ plugins {
 }
 
 group = "net.thenextlvl.utilities"
-version = "1.2.3"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
@@ -31,9 +30,12 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
 
+    implementation("net.thenextlvl.core:files:4.0.0-pre1")
     implementation("net.thenextlvl.core:paper:3.0.0-pre1")
     implementation("net.thenextlvl.version-checker:modrinth-paper:1.0.1")
     implementation("net.thenextlvl:i18n:1.2.0")
+
+    implementation("dev.faststats.metrics:bukkit:0.14.0")
     implementation("org.bstats:bstats-bukkit:3.1.0")
 }
 
@@ -59,19 +61,55 @@ paper {
         }
     }
     permissions {
-        register("builders.util.advancedfly") { default = BukkitPluginDescription.Permission.Default.OP }
-        register("builders.util.air-placing") { default = BukkitPluginDescription.Permission.Default.TRUE }
-        register("builders.util.banner") { default = BukkitPluginDescription.Permission.Default.OP }
-        register("builders.util.color") { default = BukkitPluginDescription.Permission.Default.OP }
-        register("builders.util.gui") { default = BukkitPluginDescription.Permission.Default.OP }
-        register("builders.util.nightvision") { default = BukkitPluginDescription.Permission.Default.OP }
-        register("builders.util.no-clip") { default = BukkitPluginDescription.Permission.Default.OP }
-        register("builders.util.noclip") { default = BukkitPluginDescription.Permission.Default.OP }
-        register("builders.util.pottery-designer") { default = BukkitPluginDescription.Permission.Default.OP }
+        register("builders.util.advanced-fly")
+        register("builders.util.air-placing")
+        register("builders.util.banner")
+        register("builders.util.color")
+        register("builders.util.gui")
+        register("builders.util.night-vision")
+        register("builders.util.no-clip")
+        register("builders.util.pottery-designer")
+
         register("builders.util.slabs") { default = BukkitPluginDescription.Permission.Default.TRUE }
-        register("builders.util.tpgm3") { default = BukkitPluginDescription.Permission.Default.OP }
+        register("builders.util.tpgm3") { default = BukkitPluginDescription.Permission.Default.TRUE }
         register("builders.util.trapdoor") { default = BukkitPluginDescription.Permission.Default.TRUE }
+
+        val notice = "backwards compatibility for the new permission schema"
+
+        register("additions.command.no-clip") {
+            children = listOf("builders.util.no-clip")
+            description = notice
+        }
+        register("builders.util.advancedfly") {
+            children = listOf("builders.util.advanced-fly")
+            description = notice
+        }
+        register("builders.util.nightvision") {
+            children = listOf("builders.util.night-vision")
+            description = notice
+        }
+        register("builders.util.noclip") {
+            children = listOf("builders.util.no-clip")
+            description = notice
+        }
     }
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.addAll(listOf("--add-reads", "creative.utilities.main=ALL-UNNAMED"))
+}
+
+tasks.withType<Test>().configureEach {
+    jvmArgs("--add-reads", "creative.utilities.main=ALL-UNNAMED")
+}
+
+tasks.withType<JavaExec>().configureEach {
+    jvmArgs("--add-reads", "creative.utilities.main=ALL-UNNAMED")
+}
+
+tasks.withType<Javadoc>().configureEach {
+    val options = options as StandardJavadocDocletOptions
+    options.addStringOption("-add-reads", "creative.utilities.main=ALL-UNNAMED")
 }
 
 val versionString: String = project.version as String

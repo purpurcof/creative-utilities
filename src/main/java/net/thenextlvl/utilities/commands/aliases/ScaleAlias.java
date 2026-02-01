@@ -1,0 +1,37 @@
+package net.thenextlvl.utilities.commands.aliases;
+
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import net.thenextlvl.utilities.UtilitiesPlugin;
+import net.thenextlvl.utilities.commands.brigadier.SimpleCommand;
+
+import static io.papermc.paper.command.brigadier.Commands.argument;
+
+public final class ScaleAlias extends SimpleCommand {
+    private ScaleAlias(final UtilitiesPlugin plugin) {
+        super(plugin, plugin.commands().scale, "worldedit.region.deform");
+    }
+
+    public static LiteralCommandNode<CommandSourceStack> create(final UtilitiesPlugin plugin) {
+        final var command = new ScaleAlias(plugin);
+        final var size = argument("size", IntegerArgumentType.integer());
+        return command.create().then(size.executes(command))
+                .executes(command::syntaxError)
+                .build();
+    }
+
+    private int syntaxError(final CommandContext<CommandSourceStack> context) {
+        plugin.getServer().dispatchCommand(context.getSource().getSender(), "/deform");
+        return SINGLE_SUCCESS;
+    }
+
+    @Override
+    public int run(final CommandContext<CommandSourceStack> context) {
+        final var size = context.getArgument("size", int.class);
+        final var line = "/deform x/=%s;y/=%s;z/=%s".formatted(size, size, size);
+        plugin.getServer().dispatchCommand(context.getSource().getSender(), line);
+        return SINGLE_SUCCESS;
+    }
+}
