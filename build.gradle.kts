@@ -4,7 +4,7 @@ import net.minecrell.pluginyml.paper.PaperPluginDescription
 
 plugins {
     id("java")
-    id("com.gradleup.shadow") version "9.4.1"
+    id("com.gradleup.shadow") version "9.4.2"
     id("io.papermc.hangar-publish-plugin") version "0.1.4"
     id("de.eldoria.plugin-yml.paper") version "0.9.0"
     id("com.modrinth.minotaur") version "2.+"
@@ -37,7 +37,7 @@ dependencies {
     implementation("net.thenextlvl:i18n:1.2.0")
     implementation("net.thenextlvl:interfaces:0.5.0")
 
-    implementation("dev.faststats.metrics:bukkit:0.22.0")
+    implementation("dev.faststats.metrics:bukkit:0.23.0")
     implementation("org.bstats:bstats-bukkit:3.2.1")
 }
 
